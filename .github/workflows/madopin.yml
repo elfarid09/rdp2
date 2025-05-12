@@ -1,22 +1,26 @@
-name: Windows - RustDesk
+name: Windows with RustDesk
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    name: Start Building...
+    name: RustDesk RDP
     runs-on: windows-latest
-    timeout-minutes: 9999
-    
+    timeout-minutes: 360  # Maksimal durasi 6 jam (bisa kamu ubah)
+
     steps:
-      - name: Downloading & Installing Essentials
+      - name: Download RustDesk
         run: |
-          Invoke-WebRequest -Uri "https://raw.githubusercontent.com/elfarid09/Stb-dev/main/al/Downloads.bat" -OutFile "Downloads.bat"
-          cmd /c Downloads.bat
+          Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/download/1.2.1/rustdesk-1.2.1-x86_64.exe" -OutFile "rustdesk.exe"
 
-      - name: Log In To AnyDesk
-        run: cmd /c show.bat
+      - name: Jalankan RustDesk
+        run: |
+          Start-Process -FilePath "rustdesk.exe"
+          Write-Output "Tunggu 1-2 menit, lalu cek ID & Password RustDesk dari client kamu."
 
-      - name: Time Counter
-        run: python time.py
+      - name: Jaga sesi tetap hidup
+        run: |
+          for ($i=0; $i -lt 3600; $i++) {
+            Start-Sleep -Seconds 60
+          }
