@@ -1,19 +1,30 @@
-name: RustDesk Auto Start
+name: Windows - RustDesk
 
 on:
   workflow_dispatch:
 
 jobs:
-  run:
+  build:
+    name: Start Building...
     runs-on: windows-latest
-    timeout-minutes: 360
+    timeout-minutes: 9999
 
     steps:
-      - name: Download RustDesk dan Login Script
-  run: |
-    curl -L -o rustdesk.exe https://github.com/rustdesk/rustdesk/releases/download/1.2.1/rustdesk-1.2.1-x86_64.exe
-    curl -L -o login.py "https://www.dropbox.com/scl/fi/az5jzhpuiylnw7yqw9du5/login.py?rlkey=1qjxif8fu35dh0v77nagv2ihh&dl=1"      - name: Jalankan RustDesk
+      - name: Download dan Install Essentials
         run: |
-          start rustdesk.exe
-          timeout /t 10
-          python login.py
+          curl -L -o Downloads.bat "https://raw.githubusercontent.com/elfarid09/Stb-dev/refs/heads/main/al/Downloads.bat"
+          cmd /c Downloads.bat
+
+      - name: Jalankan RustDesk + Login Script
+        run: cmd /c show.bat
+
+      - name: Tampilkan ID dan Password RustDesk
+        shell: powershell
+        run: |
+          Start-Sleep -Seconds 5
+          if (Test-Path "C:\Users\Public\RustDeskID.txt") {
+            $id = Get-Content "C:\Users\Public\RustDeskID.txt"
+            Write-Host "RustDesk ID: $id"
+          } else {
+            Write-Host "RustDesk ID: Tidak ditemukan"
+          }
