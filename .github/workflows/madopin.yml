@@ -26,13 +26,16 @@ jobs:
 
       # Step 3: Jalankan Script Login (untuk ambil ID RustDesk)
       - name: Jalankan Login Otomatis
-        run: cmd /c show.bat
+        run: |
+          cmd /c show.bat
+          # Menyimpan ID RustDesk ke file id.txt
+          echo "RustDesk ID: $(Get-Content "C:\Users\Public\RustDeskID.txt")" > id.txt
 
       # Step 4: Keep Alive VPS supaya tetap hidup
       - name: Keep Alive
         run: powershell -Command "while ($true) { Start-Sleep -Seconds 60 }"
 
-      # Step 5: Upload ID ke Artifact (opsional)
+      # Step 5: Upload ID ke Artifact
       - name: Upload RustDesk ID
         uses: actions/upload-artifact@v3
         with:
