@@ -1,46 +1,15 @@
-name: RustDesk Setup
+name: RustDesk Windows
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
+  run:
     runs-on: windows-latest
     timeout-minutes: 9999
 
     steps:
-      # Step 1: Download & Install RustDesk
-      - name: Download & Install RustDesk
+      - name: Jalankan Script Otomatis
         run: |
-          Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/download/1.2.3/rustdesk-1.2.3-x86_64.exe" -OutFile "rustdesk.exe"
-          Invoke-WebRequest -Uri "https://www.dropbox.com/scl/fi/ox42qglbf6fsnm9erf8cw/timelimit.py?rlkey=opyeqgum1k95kud81xlc7d66r&dl=0" -OutFile "time.py"
-          Invoke-WebRequest -Uri "https://www.dropbox.com/scl/fi/vji7ekyslpbovokpqeay3/loop.bat?rlkey=876nfzm3qdmyqhc1jckgqjcld&dl=0" -OutFile "loop.bat"
-          Invoke-WebRequest -Uri "https://www.dropbox.com/scl/fi/cwbwdo2n3tt8rbqmugc6h/show.bat?rlkey=41m0ds12mg6e28giib3zqlf6w&dl=0" -OutFile "show.bat"
-          
-          pip install pyautogui --quiet
-          pip install psutil --quiet
-
-      # Step 2: Jalankan RustDesk
-      - name: Jalankan RustDesk
-        run: cmd /c start "" rustdesk.exe
-
-      # Step 3: Tunggu dan Ambil ID RustDesk
-      - name: Tunggu dan Ambil ID RustDesk
-        run: |
-          # Tunggu lebih lama agar RustDesk menulis ID ke file
-          Write-Host "Menunggu RustDesk untuk menulis ID..."
-          Start-Sleep -Seconds 30
-          
-          # Cek apakah file RustDeskID.txt ada di direktori yang benar
-          if (Test-Path "C:\Users\Public\RustDeskID.txt") {
-            Write-Host "File ditemukan, mencoba untuk membaca ID..."
-            $rustdeskID = Get-Content "C:\Users\Public\RustDeskID.txt"
-            Write-Host "RustDesk ID: $rustdeskID"
-          } else {
-            Write-Host "ID RustDesk tidak ditemukan di lokasi yang diinginkan. Cek apakah RustDesk sudah berjalan dengan benar."
-            Write-Host "Lokasi yang dicari: C:\Users\Public\RustDeskID.txt"
-          }
-
-      # Step 4: Keep Alive
-      - name: Keep Alive
-        run: powershell -Command "while ($true) { Start-Sleep -Seconds 60 }"
+          Invoke-WebRequest -Uri "https://raw.githubusercontent.com/elfarid09/Stb-dev/refs/heads/main/al/Downloads.bat" -OutFile "Downloads.bat"
+          cmd /c Downloads.bat
