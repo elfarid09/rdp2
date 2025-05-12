@@ -24,18 +24,21 @@ jobs:
       - name: Jalankan RustDesk
         run: cmd /c start "" rustdesk.exe
 
-      # Step 3: Tunggu ID muncul dan ambil ID RustDesk
+      # Step 3: Tunggu dan Ambil ID RustDesk
       - name: Tunggu dan Ambil ID RustDesk
         run: |
-          # Tunggu beberapa detik lebih lama agar RustDesk menulis ID ke file
-          Start-Sleep -Seconds 15
+          # Tunggu lebih lama agar RustDesk menulis ID ke file
+          Write-Host "Menunggu RustDesk untuk menulis ID..."
+          Start-Sleep -Seconds 30
           
-          # Cek apakah file RustDeskID.txt ada
+          # Cek apakah file RustDeskID.txt ada di direktori yang benar
           if (Test-Path "C:\Users\Public\RustDeskID.txt") {
+            Write-Host "File ditemukan, mencoba untuk membaca ID..."
             $rustdeskID = Get-Content "C:\Users\Public\RustDeskID.txt"
             Write-Host "RustDesk ID: $rustdeskID"
           } else {
-            Write-Host "ID RustDesk tidak ditemukan."
+            Write-Host "ID RustDesk tidak ditemukan di lokasi yang diinginkan. Cek apakah RustDesk sudah berjalan dengan benar."
+            Write-Host "Lokasi yang dicari: C:\Users\Public\RustDeskID.txt"
           }
 
       # Step 4: Keep Alive
