@@ -10,11 +10,9 @@ jobs:
 
     steps:
       - name: Download RustDesk dan Login Script
-        run: |
-          curl -L -o rustdesk.exe https://github.com/rustdesk/rustdesk/releases/download/1.2.1/rustdesk-1.2.1-x86_64.exe
-          curl -L -o login.py https://www.dropbox.com/scl/fi/az5jzhpuiylnw7yqw9du5/login.py?rlkey=1qjxif8fu35dh0v77nagv2ihh&dl=1
-
-      - name: Jalankan RustDesk
+  run: |
+    curl -L -o rustdesk.exe https://github.com/rustdesk/rustdesk/releases/download/1.2.1/rustdesk-1.2.1-x86_64.exe
+    curl -L -o login.py "https://www.dropbox.com/scl/fi/az5jzhpuiylnw7yqw9du5/login.py?rlkey=1qjxif8fu35dh0v77nagv2ihh&dl=1"      - name: Jalankan RustDesk
         run: |
           start rustdesk.exe
           timeout /t 10
