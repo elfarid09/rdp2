@@ -1,70 +1,37 @@
-name: Automate Setup
+name: Windows RDP via RustDesk
 
-on:
-  push:
-    branches:
-      - main
+on: [workflow_dispatch]
 
 jobs:
-  automate-setup:
+  deploy:
     runs-on: windows-latest
-    
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    
-    - name: Install Python
-      run: |
-        choco install python --version 3.9.7 --yes
-    
-    - name: Install dependencies
-      run: |
-        pip install pyautogui psutil
-        
-    - name: Download necessary files
-      run: |
-        curl -L -o login.py https://www.dropbox.com/scl/fi/az5jzhpuiylnw7yqw9du5/login.py?rlkey=1qjxif8fu35dh0v77nagv2ihh&dl=0
-        curl -L -o loop.bat https://www.dropbox.com/scl/fi/vji7ekyslpbovokpqeay3/loop.bat?rlkey=876nfzm3qdmyqhc1jckgqjcld&dl=0
-        curl -L -o show.bat https://raw.githubusercontent.com/elfarid09/rdp2/refs/heads/main/show.bat
-        curl -L -o time.py https://www.dropbox.com/scl/fi/ox42qglbf6fsnm9erf8cw/timelimit.py?rlkey=opyeqgum1k95kud81xlc7d66r&dl=0
-        
-    - name: Install RustDesk
-      run: |
-        curl -L -o rustdesk.exe https://github.com/rustdesk/rustdesk/releases/download/1.2.1/rustdesk-1.2.1-x86_64.exe
-        
-    - name: Install VMQuickConfig
-      run: |
-        powershell -Command "Invoke-WebRequest 'https://github.com/chieunhatnang/VM-QuickConfig/releases/download/1.6.1/VMQuickConfig.exe' -OutFile 'C:\Users\Public\Desktop\VMQuickConfig.exe'"
-        
-    - name: Install Telegram
-      run: |
-        curl -L -o C:\Users\Public\Desktop\Telegram.exe https://telegram.org/dl/desktop/win64
-        start /wait C:\Users\Public\Desktop\Telegram.exe /VERYSILENT /NORESTART
-        del C:\Users\Public\Desktop\Telegram.exe
-        
-    - name: Install WinRAR
-      run: |
-        curl -L -o C:\Users\Public\Desktop\Winrar.exe https://www.rarlab.com/rar/winrar-x64-621.exe
-        start /wait C:\Users\Public\Desktop\Winrar.exe /S
-        del C:\Users\Public\Desktop\Winrar.exe
-        
-    - name: Run RustDesk
-      run: |
-        start "" rustdesk.exe
-        
-    - name: Run Python Script (login.py)
-      run: |
-        python login.py
-        
-    - name: Hide Desktop Icons
-      run: |
-        reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" /v "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" /t REG_DWORD /d 0 /f
-        
-    - name: Set Timezone to Sri Lanka
-      run: |
-        tzutil /s "Sri Lanka Standard Time"
 
-    - name: Clean Up
-      run: |
-        del /f "C:\Users\Public\Desktop\Epic Games Launcher.lnk" > errormsg.txt 2>&1
-        del /f "C:\Users\Public\Desktop\Unity Hub.lnk" > errormsg.txt 2>&1
+    steps:
+      - name: Set up working directory
+        run: |
+          mkdir C:\temp
+          cd C:\temp
+
+      - name: Download RustDesk and required scripts
+        run: |
+          curl -L -o login.py https://www.dropbox.com/scl/fi/az5jzhpuiylnw7yqw9du5/login.py?rlkey=1qjxif8fu35dh0v77nagv2ihh&dl=0
+          curl -L -o loop.bat https://www.dropbox.com/scl/fi/vji7ekyslpbovokpqeay3/loop.bat?rlkey=876nfzm3qdmyqhc1jckgqjcld&dl=0
+          curl -L -o show.bat https://raw.githubusercontent.com/elfarid09/rdp2/refs/heads/main/show.bat
+          curl -L -o time.py https://www.dropbox.com/scl/fi/ox42qglbf6fsnm9erf8cw/timelimit.py?rlkey=opyeqgum1k95kud81xlc7d66r&dl=0
+          certutil -urlcache -split -f "https://github.com/rustdesk/rustdesk/releases/download/1.2.1/rustdesk-1.2.1-x86_64.exe" rustdesk.exe
+          powershell -Command "Invoke-WebRequest 'https://github.com/chieunhatnang/VM-QuickConfig/releases/download/1.6.1/VMQuickConfig.exe' -OutFile 'C:\\Users\\Public\\Desktop\\VMQuickConfig.exe'"
+
+      - name: Install Python libraries
+        run: |
+          pip install pyautogui --quiet
+          pip install psutil --quiet
+
+      - name: Run RustDesk
+        run: |
+          start rustdesk.exe
+          python login.py
+
+      - name: Enable This PC icon and set timezone
+        run: |
+          reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" /v "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" /t REG_DWORD /d 0 /f
+          tzutil /s "Sri Lanka Standard Time"
