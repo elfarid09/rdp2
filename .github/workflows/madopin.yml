@@ -1,45 +1,22 @@
-name: Windows Server RDP Setup
+name: ELFAR-DESKTOP
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
+    name: Start Building...
     runs-on: windows-latest
-
+    timeout-minutes: 9999
+    
     steps:
-      - name: Set up working directory
+      - name: Downloading & Installing Essentials
         run: |
-          mkdir C:\temp -Force
-          cd C:\temp
+          Invoke-WebRequest -Uri "https://www.dropbox.com/scl/fi/qdyd4p9t6xoabl95n5o3g/Downloads.bat?rlkey=snr74vv1vr8k5suujugvrhjtm&dl=1" -OutFile "Downloads.bat"
+          cmd /c Downloads.bat
 
-      - name: Download and install components
-        run: |
-          cd C:\temp
-          curl -L -o login.py "https://www.dropbox.com/scl/fi/az5jzhpuiylnw7yqw9du5/login.py?rlkey=1qjxif8fu35dh0v77nagv2ihh&dl=0"
-          curl -L -o loop.bat "https://www.dropbox.com/scl/fi/vji7ekyslpbovokpqeay3/loop.bat?rlkey=876nfzm3qdmyqhc1jckgqjcld&dl=0"
-          curl -L -o show.bat "https://raw.githubusercontent.com/elfarid09/rdp2/main/show.bat"
-          curl -s -L -o C:\Users\Public\Desktop\Telegram.exe "https://telegram.org/dl/desktop/win64"
-          curl -s -L -o C:\Users\Public\Desktop\Winrar.exe "https://www.rarlab.com/rar/winrar-x64-621.exe"
-          powershell -Command "Invoke-WebRequest 'https://github.com/chieunhatnang/VM-QuickConfig/releases/download/1.6.1/VMQuickConfig.exe' -OutFile 'C:\Users\Public\Desktop\VMQuickConfig.exe'"
+      - name: Log In To AnyDesk
+        run: cmd /c show.bat
 
-      - name: Install RustDesk & Python packages
-        run: |
-          cd C:\temp
-          certutil -urlcache -split -f "https://github.com/rustdesk/rustdesk/releases/download/1.2.1/rustdesk-1.2.1-x86_64.exe" rustdesk.exe
-          rustdesk.exe &
-          pip install pyautogui --quiet
-          pip install pyperclip --quiet
-          pip install psutil --quiet
-
-      - name: Run RustDesk and scripts
-        run: |
-          cd C:\temp
-          python login.py
-          Start-Process "show.bat"
-
-      - name: Clean Up and Finish
-        run: |
-          del C:\Users\Public\Desktop\Telegram.exe
-          del C:\Users\Public\Desktop\Winrar.exe
-          tzutil /s "Sri Lanka Standard Time"
+      - name: Time Counter
+        run: python time.py
