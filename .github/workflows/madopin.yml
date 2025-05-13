@@ -36,7 +36,7 @@ jobs:
         run: |
           cd C:\temp
           python login.py
-          call show.bat
+          Start-Process "show.bat"
 
       - name: Clean Up and Finish
         run: |
