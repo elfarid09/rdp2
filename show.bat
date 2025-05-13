@@ -1,17 +1,9 @@
 @echo off
-:: Install Chocolatey (jika belum ada)
-where choco >nul 2>&1
-if errorlevel 1 (
-    echo Installing Chocolatey...
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
-    refreshenv
-)
+:: Ganti warna hijau gelap
+color 0A
+cls
 
-:: Install figlet and neofetch if not already installed
-choco install figlet -y >nul
-choco install neofetch -y >nul
-
-:: Jalankan klik otomatis
+:: Klik otomatis menggunakan pyautogui
 python -c "import pyautogui as pag; pag.click(785, 17, duration=2)"
 python -c "import pyautogui as pag; pag.click(903, 64, duration=2)"
 start "" /MAX "C:\Users\Public\Desktop\VMQuickConfig"
@@ -19,16 +11,46 @@ python -c "import pyautogui as pag; pag.click(147, 489, duration=2)"
 python -c "import pyautogui as pag; pag.click(156, 552, duration=2)"
 python -c "import pyautogui as pag; pag.click(587, 14, duration=2)"
 
-:: Ganti warna menjadi hijau (khusus terminal yang mendukung)
-echo [32m
+:: ASCII Art judul SETBOX (tanpa figlet)
+echo.
+echo  ███████╗███████╗████████╗██████╗  ██████╗ ██╗  ██╗
+echo  ██╔════╝██╔════╝╚══██╔══╝██╔══██╗██╔═══██╗██║ ██╔╝
+echo  ███████╗█████╗     ██║   ██████╔╝██║   ██║█████╔╝ 
+echo  ╚════██║██╔══╝     ██║   ██╔═══╝ ██║   ██║██╔═██╗ 
+echo  ███████║███████╗   ██║   ██║     ╚██████╔╝██║  ██╗
+echo  ╚══════╝╚══════╝   ╚═╝   ╚═╝      ╚═════╝ ╚═╝  ╚═╝
+echo.
 
-:: Tampilkan teks X-SETBOX dengan figlet
-figlet X-SETBOX
+:: Info sistem ala Neofetch
+echo ================= SYSTEM INFO =================
+echo Username         : %USERNAME%
+echo Computer Name    : %COMPUTERNAME%
+echo OS Version       : %OS%
+ver | findstr /C:"Microsoft" > nul
+if %errorlevel%==0 (
+    systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+)
+echo Architecture     : %PROCESSOR_ARCHITECTURE%
+echo CPU              : %PROCESSOR_IDENTIFIER%
+echo RAM              : 
+wmic MemoryChip get Capacity | findstr /R "[1-9]" > temp_ram.txt
+setlocal enabledelayedexpansion
+set ram_total=0
+for /f %%A in (temp_ram.txt) do (
+    set /a ram_total=!ram_total! + %%A
+)
+set /a ram_gb=%ram_total:~0,-9%
+echo     Total: %ram_gb% GB
+del temp_ram.txt >nul 2>&1
+endlocal
+echo ===============================================
+echo.
 
-:: Jalankan neofetch
-neofetch
-
-:: Reset warna
-echo [0m
-
+:: Informasi tambahan
+echo ..........................................................
+echo .....Design by Safelfar_05................................
+echo ..........................................................
+echo ........ Subscribe To my  Channel ........................
+echo ..........................................................
 echo Your Device Name: %username%@%computername%
+echo ..........................................................
